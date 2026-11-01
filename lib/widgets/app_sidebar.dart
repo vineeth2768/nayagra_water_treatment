@@ -61,12 +61,12 @@ class AppSidebar extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'WATER TREATMENT CRM',
+                        'WATER TREATMENT PLANTS',
                         style: TextStyle(
                           color: AppColors.accent,
-                          fontSize: 9,
+                          fontSize: 8.5,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.8,
+                          letterSpacing: 0.6,
                         ),
                       ),
                     ],

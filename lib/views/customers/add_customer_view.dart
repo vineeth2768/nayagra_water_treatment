@@ -39,7 +39,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
   // Address
   final _addressController = TextEditingController();
   final _cityController = TextEditingController();
-  String _state = 'Gujarat';
+  String _state = 'Kerala';
   final _pinCodeController = TextEditingController();
 
   // Additional
@@ -232,11 +232,12 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
+                                final now = DateTime.now();
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: _dob ?? DateTime(1990),
+                                  initialDate: _dob ?? now,
                                   firstDate: DateTime(1940),
-                                  lastDate: DateTime.now(),
+                                  lastDate: now,
                                 );
                                 if (picked != null) {
                                   setState(() => _dob = picked);
@@ -280,11 +281,12 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
+                                final now = DateTime.now();
                                 final picked = await showDatePicker(
                                   context: context,
                                   initialDate: _installationDate,
                                   firstDate: DateTime(2015),
-                                  lastDate: DateTime.now().add(const Duration(days: 30)),
+                                  lastDate: now.add(const Duration(days: 365)),
                                 );
                                 if (picked != null) {
                                   setState(() => _installationDate = picked);
@@ -306,11 +308,12 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
+                                final now = DateTime.now();
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: _firstContactDate ?? _installationDate,
+                                  initialDate: _firstContactDate ?? now,
                                   firstDate: DateTime(2015),
-                                  lastDate: DateTime.now(),
+                                  lastDate: now,
                                 );
                                 if (picked != null) {
                                   setState(() => _firstContactDate = picked);
@@ -355,7 +358,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                             child: CustomTextField(
                               controller: _cityController,
                               label: 'City',
-                              hint: 'e.g., Ahmedabad / Bengaluru',
+                              hint: 'e.g., Vaikom / Kottayam / Kochi',
                             ),
                           ),
                           const SizedBox(width: 16),

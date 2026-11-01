@@ -17,8 +17,8 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController(text: 'admin@nayagra.com');
-  final _passwordController = TextEditingController(text: 'admin123');
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
@@ -135,53 +135,27 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         const SizedBox(height: 16),
                         const Text(
-                          'NAYAGRA WATER TREATMENT',
+                          'NAYAGRA WATER TREATMENT PLANTS',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: 1.5,
+                            letterSpacing: 1.2,
                             color: AppColors.primary,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         const Text(
-                          'Water Treatment Plant & CRM Portal',
+                          'Introducing customized water treatment plants using latest technologies at an affordable price',
                           style: TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
+                            height: 1.3,
                           ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 24),
-
-                        // Default Admin Notice Pill
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryLight,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
-                          ),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.verified_user_rounded, color: AppColors.secondary, size: 20),
-                              SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
-                                  'Default Administrator Account Pre-loaded.\nClick "Sign In" below to enter.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
 
                         // Error Banner (if any)
                         if (auth.errorMessage != null) ...[
@@ -217,7 +191,7 @@ class _LoginViewState extends State<LoginView> {
                         CustomTextField(
                           controller: _emailController,
                           label: AppStrings.email,
-                          hint: 'admin@nayagra.com',
+                          hint: 'Enter your email address',
                           isRequired: true,
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: const Icon(Icons.email_outlined, size: 18, color: AppColors.textSecondary),
@@ -296,6 +270,27 @@ class _LoginViewState extends State<LoginView> {
                                     ),
                                   ],
                                 ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        // Company Address Footer
+                        const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.location_on_outlined, size: 15, color: AppColors.secondary),
+                            SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Nayagra Water Treatment Plants. Udayanapuram Vaikom , Kottayam ,kerala',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textMuted,
+                                  height: 1.3,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

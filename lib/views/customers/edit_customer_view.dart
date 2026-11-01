@@ -239,11 +239,12 @@ class _EditCustomerViewState extends State<EditCustomerView> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
+                                final now = DateTime.now();
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: _dob ?? DateTime(1990),
+                                  initialDate: _dob ?? now,
                                   firstDate: DateTime(1940),
-                                  lastDate: DateTime.now(),
+                                  lastDate: now,
                                 );
                                 if (picked != null) {
                                   setState(() => _dob = picked);
@@ -312,11 +313,12 @@ class _EditCustomerViewState extends State<EditCustomerView> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
+                                final now = DateTime.now();
                                 final picked = await showDatePicker(
                                   context: context,
-                                  initialDate: _firstContactDate ?? _installationDate,
+                                  initialDate: _firstContactDate ?? now,
                                   firstDate: DateTime(2015),
-                                  lastDate: DateTime.now(),
+                                  lastDate: now,
                                 );
                                 if (picked != null) {
                                   setState(() => _firstContactDate = picked);

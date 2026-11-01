@@ -1,6 +1,7 @@
 class AppConstants {
-  static const String appName = 'Nayagra Water Treatment';
-  static const String appTagline = 'Industrial & Domestic Water Treatment Plant CRM';
+  static const String appName = 'Nayagra Water Treatment Plants';
+  static const String appTagline = 'Introducing customized water treatment plants using latest technologies at an affordable price';
+  static const String companyAddress = 'Nayagra Water Treatment Plants, Udayanapuram Vaikom, Kottayam, Kerala';
   static const String appVersion = '1.0.0';
 
   // Service Interval

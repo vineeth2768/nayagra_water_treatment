@@ -35,10 +35,9 @@ class _SettingsViewState extends State<SettingsView> {
                   icon: Icons.business_rounded,
                   children: [
                     _buildRow('Company Name', AppConstants.appName),
-                    _buildRow('Business Scope', AppConstants.appTagline),
+                    _buildRow('About Company', AppConstants.appTagline),
+                    _buildRow('Registered Address', AppConstants.companyAddress),
                     _buildRow('CRM Version', 'v${AppConstants.appVersion} (Production Web)'),
-                    _buildRow('Headquarters', 'Ahmedabad, Gujarat, India'),
-                    _buildRow('Service Hotline', '+91 98765 43210 (Support Desk)'),
                   ],
                 ),
                 const SizedBox(height: 24),

@@ -25,24 +25,25 @@ class DashboardStatCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
+              blurRadius: 6,
               offset: const Offset(0, 2),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,7 +52,7 @@ class DashboardStatCard extends StatelessWidget {
                   child: Text(
                     title,
                     style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 11.5,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textSecondary,
                     ),
@@ -60,31 +61,31 @@ class DashboardStatCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
                     color: iconBgColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, color: iconColor, size: 20),
+                  child: Icon(icon, color: iconColor, size: 16),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
             Text(
               value,
               style: const TextStyle(
-                fontSize: 28,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
             if (subtitle != null) ...[
-              const SizedBox(height: 6),
+              const SizedBox(height: 3),
               Text(
                 subtitle!,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 10,
                   color: AppColors.textMuted,
                 ),
                 maxLines: 1,

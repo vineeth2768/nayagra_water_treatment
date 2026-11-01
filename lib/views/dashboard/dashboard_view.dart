@@ -162,81 +162,89 @@ class DashboardView extends StatelessWidget {
   }
 
   Widget _buildStatsGrid(BuildContext context, dynamic stats) {
+    final cards = [
+      DashboardStatCard(
+        title: 'Total Customers',
+        value: '${stats.totalCustomers}',
+        subtitle: 'Active corporate & domestic',
+        icon: Icons.people_outline_rounded,
+        iconColor: AppColors.primary,
+        iconBgColor: AppColors.secondaryLight,
+        onTap: () => context.go(RouteNames.customers),
+      ),
+      DashboardStatCard(
+        title: 'Installed Plants',
+        value: '${stats.totalInstalledPlants}',
+        subtitle: 'RO, Softeners, DM & STP',
+        icon: Icons.precision_manufacturing_outlined,
+        iconColor: AppColors.secondary,
+        iconBgColor: AppColors.secondaryLight,
+        onTap: () => context.go(RouteNames.customers),
+      ),
+      DashboardStatCard(
+        title: 'Upcoming Services',
+        value: '${stats.upcomingServices}',
+        subtitle: 'Next 6-month cycles',
+        icon: Icons.pending_actions_rounded,
+        iconColor: AppColors.success,
+        iconBgColor: AppColors.successLight,
+        onTap: () => context.go(RouteNames.upcomingServices),
+      ),
+      DashboardStatCard(
+        title: 'Overdue Services',
+        value: '${stats.overdueServices}',
+        subtitle: stats.overdueServices > 0 ? 'Requires attention!' : 'All plants up to date',
+        icon: Icons.warning_amber_rounded,
+        iconColor: AppColors.danger,
+        iconBgColor: AppColors.dangerLight,
+        onTap: () => context.go(RouteNames.upcomingServices),
+      ),
+      DashboardStatCard(
+        title: 'Completed Services',
+        value: '${stats.completedServices}',
+        subtitle: 'Historical records kept',
+        icon: Icons.task_alt_rounded,
+        iconColor: AppColors.accent,
+        iconBgColor: AppColors.accentLight,
+        onTap: () => context.go(RouteNames.completedServices),
+      ),
+      DashboardStatCard(
+        title: 'Services This Month',
+        value: '${stats.servicesDueThisMonth}',
+        subtitle: 'Current monthly cycle',
+        icon: Icons.calendar_month_rounded,
+        iconColor: AppColors.warning,
+        iconBgColor: AppColors.warningLight,
+        onTap: () => context.go(RouteNames.upcomingServices),
+      ),
+    ];
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        int crossAxisCount = 6;
-        if (constraints.maxWidth < 600) {
-          crossAxisCount = 1;
-        } else if (constraints.maxWidth < 900) {
-          crossAxisCount = 2;
-        } else if (constraints.maxWidth < 1300) {
-          crossAxisCount = 3;
+        if (constraints.maxWidth >= 900) {
+          return Row(
+            children: [
+              for (int i = 0; i < cards.length; i++) ...[
+                if (i > 0) const SizedBox(width: 12),
+                Expanded(child: cards[i]),
+              ],
+            ],
+          );
+        } else {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  for (int i = 0; i < cards.length; i++) ...[
+                    if (i > 0) const SizedBox(width: 12),
+                    SizedBox(width: 175, child: cards[i]),
+                  ],
+                ],
+              ),
+            ),
+          );
         }
-
-        return GridView.count(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.5,
-          children: [
-            DashboardStatCard(
-              title: 'Total Customers',
-              value: '${stats.totalCustomers}',
-              subtitle: 'Active corporate & domestic',
-              icon: Icons.people_outline_rounded,
-              iconColor: AppColors.primary,
-              iconBgColor: AppColors.secondaryLight,
-              onTap: () => context.go(RouteNames.customers),
-            ),
-            DashboardStatCard(
-              title: 'Installed Plants',
-              value: '${stats.totalInstalledPlants}',
-              subtitle: 'RO, Softeners, DM & STP',
-              icon: Icons.precision_manufacturing_outlined,
-              iconColor: AppColors.secondary,
-              iconBgColor: AppColors.secondaryLight,
-              onTap: () => context.go(RouteNames.customers),
-            ),
-            DashboardStatCard(
-              title: 'Upcoming Services',
-              value: '${stats.upcomingServices}',
-              subtitle: 'Next 6-month cycles',
-              icon: Icons.pending_actions_rounded,
-              iconColor: AppColors.success,
-              iconBgColor: AppColors.successLight,
-              onTap: () => context.go(RouteNames.upcomingServices),
-            ),
-            DashboardStatCard(
-              title: 'Overdue Services',
-              value: '${stats.overdueServices}',
-              subtitle: stats.overdueServices > 0 ? 'Requires attention!' : 'All plants up to date',
-              icon: Icons.warning_amber_rounded,
-              iconColor: AppColors.danger,
-              iconBgColor: AppColors.dangerLight,
-              onTap: () => context.go(RouteNames.upcomingServices),
-            ),
-            DashboardStatCard(
-              title: 'Completed Services',
-              value: '${stats.completedServices}',
-              subtitle: 'Historical records kept',
-              icon: Icons.task_alt_rounded,
-              iconColor: AppColors.accent,
-              iconBgColor: AppColors.accentLight,
-              onTap: () => context.go(RouteNames.completedServices),
-            ),
-            DashboardStatCard(
-              title: 'Services This Month',
-              value: '${stats.servicesDueThisMonth}',
-              subtitle: 'Current monthly cycle',
-              icon: Icons.calendar_month_rounded,
-              iconColor: AppColors.warning,
-              iconBgColor: AppColors.warningLight,
-              onTap: () => context.go(RouteNames.upcomingServices),
-            ),
-          ],
-        );
       },
     );
   }
