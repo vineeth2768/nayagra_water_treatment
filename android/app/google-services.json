@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "657902920245",
+    "project_id": "nayagrawatertreatmentplants",
+    "storage_bucket": "nayagrawatertreatmentplants.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657902920245:android:fd78e9df2a2dbb8722c77c",
+        "android_client_info": {
+          "package_name": "com.example.nayagra_water_treatment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuVouUyzwmdCCHFiOxImMjD7WX_dGZvlk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
