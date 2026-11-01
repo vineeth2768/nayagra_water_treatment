@@ -35,51 +35,81 @@ class AppRouter {
       routes: [
         GoRoute(
           path: RouteNames.login,
-          builder: (context, state) => const LoginView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const LoginView(),
+          ),
         ),
         GoRoute(
           path: RouteNames.dashboard,
-          builder: (context, state) => const DashboardView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const DashboardView(),
+          ),
         ),
         GoRoute(
           path: RouteNames.customers,
-          builder: (context, state) => const CustomerListView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const CustomerListView(),
+          ),
           routes: [
             GoRoute(
               path: 'add',
-              builder: (context, state) => const AddCustomerView(),
+              pageBuilder: (context, state) => NoTransitionPage<void>(
+                key: state.pageKey,
+                child: const AddCustomerView(),
+              ),
             ),
             GoRoute(
               path: ':id/edit',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final id = state.pathParameters['id'] ?? '';
-                return EditCustomerView(customerId: id);
+                return NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: EditCustomerView(customerId: id),
+                );
               },
             ),
             GoRoute(
               path: ':id',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final id = state.pathParameters['id'] ?? '';
-                return CustomerDetailsView(customerId: id);
+                return NoTransitionPage<void>(
+                  key: state.pageKey,
+                  child: CustomerDetailsView(customerId: id),
+                );
               },
             ),
           ],
         ),
         GoRoute(
           path: RouteNames.upcomingServices,
-          builder: (context, state) => const UpcomingServicesView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const UpcomingServicesView(),
+          ),
         ),
         GoRoute(
           path: RouteNames.completedServices,
-          builder: (context, state) => const CompletedServicesView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const CompletedServicesView(),
+          ),
         ),
         GoRoute(
           path: RouteNames.serviceHistory,
-          builder: (context, state) => const ServiceHistoryView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const ServiceHistoryView(),
+          ),
         ),
         GoRoute(
           path: RouteNames.settings,
-          builder: (context, state) => const SettingsView(),
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const SettingsView(),
+          ),
         ),
       ],
       errorBuilder: (context, state) => Scaffold(
