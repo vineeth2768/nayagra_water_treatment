@@ -8,6 +8,7 @@ import '../../core/utils/date_formatter.dart';
 import '../../core/utils/validators.dart';
 import '../../models/customer_model.dart';
 import '../../providers/customer_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../../routes/route_names.dart';
 import '../../widgets/main_layout.dart';
 import '../../widgets/custom_text_field.dart';
@@ -129,6 +130,9 @@ class _AddCustomerViewState extends State<AddCustomerView> {
     setState(() => _isSaving = false);
 
     if (customerId != null && mounted) {
+      // Trigger silent dashboard stats refresh in the background
+      context.read<DashboardProvider>().loadStats(silent: true);
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(AppStrings.customerCreated),

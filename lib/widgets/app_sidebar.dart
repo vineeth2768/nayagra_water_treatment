@@ -28,10 +28,12 @@ class AppSidebar extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  width: 44,
+                  height: 44,
                   decoration: BoxDecoration(
-                    color: AppColors.secondary,
+                    color: Colors.black,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.secondary.withValues(alpha: 0.5), width: 1.5),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.secondary.withValues(alpha: 0.4),
@@ -40,10 +42,10 @@ class AppSidebar extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.water_drop_rounded,
-                    color: Colors.white,
-                    size: 24,
+                  clipBehavior: Clip.antiAlias,
+                  child: Image.asset(
+                    'assets/images/logo_icon.png',
+                    fit: BoxFit.contain,
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -120,16 +120,24 @@ class _LoginViewState extends State<LoginView> {
                         // Logo & Brand
                         Center(
                           child: Container(
-                            padding: const EdgeInsets.all(14),
+                            width: 88,
+                            height: 88,
                             decoration: BoxDecoration(
-                              color: AppColors.secondaryLight,
+                              color: Colors.black,
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
+                              border: Border.all(color: AppColors.secondary.withValues(alpha: 0.5), width: 1.5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.secondary.withValues(alpha: 0.3),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
                             ),
-                            child: const Icon(
-                              Icons.water_drop_rounded,
-                              size: 36,
-                              color: AppColors.secondary,
+                            clipBehavior: Clip.antiAlias,
+                            child: Image.asset(
+                              'assets/images/logo_icon.png',
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),

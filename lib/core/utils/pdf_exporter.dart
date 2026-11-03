@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:web/web.dart' as web;
@@ -15,6 +16,12 @@ class PdfExporter {
     final now = DateTime.now();
     final dateStr = DateFormatter.formatDate(now);
 
+    pw.MemoryImage? logoImage;
+    try {
+      final logoBytes = await rootBundle.load('assets/images/logo_icon.png');
+      logoImage = pw.MemoryImage(logoBytes.buffer.asUint8List());
+    } catch (_) {}
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4.landscape,
@@ -27,33 +34,46 @@ class PdfExporter {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Column(
+                  pw.Row(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(
-                        'NAYAGRA WATER TREATMENT PLANTS',
-                        style: pw.TextStyle(
-                          fontSize: 16,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColor.fromHex('0C243B'),
+                      if (logoImage != null) ...[
+                        pw.Container(
+                          width: 36,
+                          height: 36,
+                          margin: const pw.EdgeInsets.only(right: 10),
+                          child: pw.Image(logoImage),
                         ),
-                      ),
-                      pw.SizedBox(height: 2),
-                      pw.Text(
-                        AppConstants.appTagline,
-                        style: pw.TextStyle(
-                          fontSize: 8.5,
-                          color: PdfColor.fromHex('4A627A'),
-                        ),
-                      ),
-                      pw.SizedBox(height: 2),
-                      pw.Text(
-                        AppConstants.companyAddress,
-                        style: pw.TextStyle(
-                          fontSize: 8.5,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColor.fromHex('1B6CA8'),
-                        ),
+                      ],
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'NAYAGRA WATER TREATMENT PLANTS',
+                            style: pw.TextStyle(
+                              fontSize: 15,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColor.fromHex('0C243B'),
+                            ),
+                          ),
+                          pw.SizedBox(height: 2),
+                          pw.Text(
+                            AppConstants.appTagline,
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              color: PdfColor.fromHex('4A627A'),
+                            ),
+                          ),
+                          pw.SizedBox(height: 2),
+                          pw.Text(
+                            AppConstants.companyAddress,
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColor.fromHex('1B6CA8'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -237,6 +257,12 @@ class PdfExporter {
     final pdf = pw.Document();
     final now = DateTime.now();
 
+    pw.MemoryImage? logoImage;
+    try {
+      final logoBytes = await rootBundle.load('assets/images/logo_icon.png');
+      logoImage = pw.MemoryImage(logoBytes.buffer.asUint8List());
+    } catch (_) {}
+
     pdf.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
@@ -248,24 +274,36 @@ class PdfExporter {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  pw.Row(
                     children: [
-                      pw.Text(
-                        'NAYAGRA WATER TREATMENT PLANTS',
-                        style: pw.TextStyle(
-                          fontSize: 15,
-                          fontWeight: pw.FontWeight.bold,
-                          color: PdfColor.fromHex('0C243B'),
+                      if (logoImage != null) ...[
+                        pw.Container(
+                          width: 32,
+                          height: 32,
+                          margin: const pw.EdgeInsets.only(right: 8),
+                          child: pw.Image(logoImage),
                         ),
-                      ),
-                      pw.SizedBox(height: 2),
-                      pw.Text(
-                        AppConstants.companyAddress,
-                        style: pw.TextStyle(
-                          fontSize: 8.5,
-                          color: PdfColor.fromHex('1B6CA8'),
-                        ),
+                      ],
+                      pw.Column(
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Text(
+                            'NAYAGRA WATER TREATMENT PLANTS',
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                              color: PdfColor.fromHex('0C243B'),
+                            ),
+                          ),
+                          pw.SizedBox(height: 2),
+                          pw.Text(
+                            AppConstants.companyAddress,
+                            style: pw.TextStyle(
+                              fontSize: 8,
+                              color: PdfColor.fromHex('1B6CA8'),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

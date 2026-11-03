@@ -40,10 +40,10 @@ class Validators {
 
   static String? pinCode(String? value, [bool isRequired = false]) {
     if (value == null || value.trim().isEmpty) {
-      return isRequired ? 'PIN Code is required' : null;
+      return isRequired ? 'PIN / Postal Code is required' : null;
     }
-    if (!RegExp(r'^\d{6}$').hasMatch(value.trim())) {
-      return 'Please enter a valid 6-digit PIN code';
+    if (value.trim().length < 3 || value.trim().length > 10) {
+      return 'Please enter a valid postal code (3 to 10 characters)';
     }
     return null;
   }

@@ -6,6 +6,7 @@ import '../../core/constants/app_strings.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../models/service_model.dart';
 import '../../providers/service_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../../widgets/main_layout.dart';
 import '../../widgets/service_status_badge.dart';
 import '../../widgets/complete_service_dialog.dart';
@@ -315,6 +316,9 @@ class UpcomingServicesView extends StatelessWidget {
                             final newDate = await RescheduleServiceDialog.show(context, s);
                             if (newDate != null && context.mounted) {
                               await provider.rescheduleService(serviceId: s.id, newDate: newDate);
+                              if (context.mounted) {
+                                context.read<DashboardProvider>().loadStats(silent: true);
+                              }
                             }
                           },
                         ),
@@ -336,6 +340,7 @@ class UpcomingServicesView extends StatelessWidget {
                                 changesMade: res['changesMade'],
                               );
                               if (context.mounted) {
+                                context.read<DashboardProvider>().loadStats(silent: true);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(AppStrings.serviceCompleted),

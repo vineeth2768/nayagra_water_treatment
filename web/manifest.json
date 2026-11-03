@@ -1,11 +1,11 @@
 {
-    "name": "nayagra_water_treatment",
-    "short_name": "nayagra_water_treatment",
+    "name": "Nayagra Water Treatment Plants CRM",
+    "short_name": "Nayagra CRM",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0C243B",
+    "theme_color": "#0C243B",
+    "description": "Nayagra Water Treatment Plants - CRM & 6-Month Service Management System",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

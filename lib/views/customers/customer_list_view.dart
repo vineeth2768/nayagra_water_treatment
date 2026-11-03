@@ -6,6 +6,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/constants/app_strings.dart';
 import '../../models/customer_model.dart';
 import '../../providers/customer_provider.dart';
+import '../../providers/dashboard_provider.dart';
 import '../../routes/route_names.dart';
 import '../../widgets/main_layout.dart';
 import '../../widgets/customer_data_table.dart';
@@ -209,6 +210,7 @@ class CustomerListView extends StatelessWidget {
     if (confirm == true && context.mounted) {
       final success = await provider.deleteCustomer(customer.id);
       if (success && context.mounted) {
+        context.read<DashboardProvider>().loadStats(silent: true);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.customerDeleted),

@@ -11,8 +11,23 @@ import '../../widgets/main_layout.dart';
 import '../../widgets/dashboard_stat_card.dart';
 import '../../widgets/loading_widget.dart';
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
+
+  @override
+  State<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<DashboardProvider>().loadStats(silent: true);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
