@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/utils/date_formatter.dart';
+import '../../core/utils/pdf_exporter.dart';
 import '../../models/customer_model.dart';
 import '../../models/service_model.dart';
 import '../../providers/customer_provider.dart';
@@ -78,7 +79,29 @@ class _CustomerDetailsViewState extends State<CustomerDetailsView> with SingleTi
           icon: const Icon(Icons.arrow_back_rounded, size: 16),
           label: const Text('Customers'),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 8),
+        ElevatedButton.icon(
+          onPressed: () async {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Generating Customer Plant Report PDF...'),
+                duration: Duration(seconds: 2),
+                backgroundColor: AppColors.primary,
+              ),
+            );
+            await PdfExporter.exportCustomerProfilePdf(
+              customer: customer,
+              services: services,
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFC53030),
+            foregroundColor: Colors.white,
+          ),
+          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+          label: const Text('Download PDF'),
+        ),
+        const SizedBox(width: 8),
         ElevatedButton.icon(
           onPressed: () => context.go('/customers/${customer.id}/edit'),
           icon: const Icon(Icons.edit_outlined, size: 16),
@@ -296,6 +319,92 @@ class _CustomerDetailsViewState extends State<CustomerDetailsView> with SingleTi
                           {'label': 'System Health', 'value': customer.isActive ? 'Active & Monitored' : 'Inactive'},
                         ],
                       ),
+                      if (customer.products.isNotEmpty)
+                        Container(
+                          width: constraints.maxWidth,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(Icons.inventory_2_outlined, size: 20, color: AppColors.secondary),
+                                  const SizedBox(width: 10),
+                                  const Text(
+                                    'Installed Products & Equipment',
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.primary),
+                                  ),
+                                  const Spacer(),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.secondaryLight,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      '${customer.products.length} Items',
+                                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              ...customer.products.asMap().entries.map((entry) {
+                                final index = entry.key + 1;
+                                final prod = entry.value;
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.background,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: AppColors.border),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          '#$index',
+                                          style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              prod.name,
+                                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
+                                            ),
+                                            if (prod.details.isNotEmpty) ...[
+                                              const SizedBox(height: 3),
+                                              Text(
+                                                prod.details,
+                                                style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                     ],
                   );
                 },

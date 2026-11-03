@@ -153,7 +153,7 @@ class _CompleteServiceDialogState extends State<CompleteServiceDialog> {
                       final picked = await showDatePicker(
                         context: context,
                         initialDate: _completedDate,
-                        firstDate: DateTime(2020),
+                        firstDate: DateTime(1980),
                         lastDate: DateTime.now().add(const Duration(days: 30)),
                       );
                       if (picked != null) {

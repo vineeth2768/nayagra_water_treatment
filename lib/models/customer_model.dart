@@ -1,5 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class CustomerProduct {
+  final String name;
+  final String details;
+
+  const CustomerProduct({
+    required this.name,
+    this.details = '',
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'details': details,
+    };
+  }
+
+  factory CustomerProduct.fromMap(Map<String, dynamic> map) {
+    return CustomerProduct(
+      name: map['name'] ?? '',
+      details: map['details'] ?? map['description'] ?? '',
+    );
+  }
+}
+
 class CustomerModel {
   final String id;
   final String name;
@@ -22,6 +46,7 @@ class CustomerModel {
   final DateTime? nextServiceDate;
   final DateTime? lastServiceDate;
   final int totalServicesCompleted;
+  final List<CustomerProduct> products;
 
   CustomerModel({
     required this.id,
@@ -45,6 +70,7 @@ class CustomerModel {
     this.nextServiceDate,
     this.lastServiceDate,
     this.totalServicesCompleted = 0,
+    this.products = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -69,6 +95,7 @@ class CustomerModel {
       'nextServiceDate': nextServiceDate != null ? Timestamp.fromDate(nextServiceDate!) : null,
       'lastServiceDate': lastServiceDate != null ? Timestamp.fromDate(lastServiceDate!) : null,
       'totalServicesCompleted': totalServicesCompleted,
+      'products': products.map((p) => p.toMap()).toList(),
     };
   }
 
@@ -84,6 +111,16 @@ class CustomerModel {
       if (value is DateTime) return value;
       if (value is String) return DateTime.tryParse(value);
       return null;
+    }
+
+    final rawProducts = map['products'] as List<dynamic>?;
+    final List<CustomerProduct> parsedProducts = [];
+    if (rawProducts != null) {
+      for (final item in rawProducts) {
+        if (item is Map) {
+          parsedProducts.add(CustomerProduct.fromMap(Map<String, dynamic>.from(item)));
+        }
+      }
     }
 
     return CustomerModel(
@@ -108,6 +145,7 @@ class CustomerModel {
       nextServiceDate: parseDateTime(map['nextServiceDate']),
       lastServiceDate: parseDateTime(map['lastServiceDate']),
       totalServicesCompleted: (map['totalServicesCompleted'] as num?)?.toInt() ?? 0,
+      products: parsedProducts,
     );
   }
 
@@ -133,6 +171,7 @@ class CustomerModel {
     DateTime? nextServiceDate,
     DateTime? lastServiceDate,
     int? totalServicesCompleted,
+    List<CustomerProduct>? products,
   }) {
     return CustomerModel(
       id: id ?? this.id,
@@ -156,6 +195,7 @@ class CustomerModel {
       nextServiceDate: nextServiceDate ?? this.nextServiceDate,
       lastServiceDate: lastServiceDate ?? this.lastServiceDate,
       totalServicesCompleted: totalServicesCompleted ?? this.totalServicesCompleted,
+      products: products ?? this.products,
     );
   }
 }

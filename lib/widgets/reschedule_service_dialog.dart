@@ -84,7 +84,7 @@ class _RescheduleServiceDialogState extends State<RescheduleServiceDialog> {
                   final picked = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate,
-                    firstDate: DateTime(2020),
+                    firstDate: DateTime(1980),
                     lastDate: DateTime(2035),
                   );
                   if (picked != null) {

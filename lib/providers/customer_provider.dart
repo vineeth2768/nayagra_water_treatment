@@ -5,6 +5,7 @@ import '../controllers/customer_controller.dart';
 import '../core/constants/app_constants.dart';
 import '../core/utils/date_formatter.dart';
 import '../core/utils/csv_exporter.dart';
+import '../core/utils/pdf_exporter.dart';
 
 class CustomerProvider extends ChangeNotifier {
   final CustomerController _controller;
@@ -278,5 +279,9 @@ class CustomerProvider extends ChangeNotifier {
       filename: 'nayagra_customers_${DateFormatter.formatShortDate(DateTime.now()).replaceAll('/', '-')}',
       rows: rows,
     );
+  }
+
+  Future<void> exportCustomersToPdf() async {
+    await PdfExporter.exportCustomersToPdf(filteredCustomers);
   }
 }

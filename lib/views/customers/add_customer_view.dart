@@ -13,6 +13,20 @@ import '../../widgets/main_layout.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/custom_dropdown.dart';
 
+class _ProductItemController {
+  final TextEditingController nameController;
+  final TextEditingController detailsController;
+
+  _ProductItemController({String name = '', String details = ''})
+      : nameController = TextEditingController(text: name),
+        detailsController = TextEditingController(text: details);
+
+  void dispose() {
+    nameController.dispose();
+    detailsController.dispose();
+  }
+}
+
 class AddCustomerView extends StatefulWidget {
   const AddCustomerView({super.key});
 
@@ -36,6 +50,11 @@ class _AddCustomerViewState extends State<AddCustomerView> {
   final String _plantType = 'Water Treatment Plant';
   DateTime? _firstContactDate;
 
+  // Products / Equipment (Multiple allowed)
+  final List<_ProductItemController> _productControllers = [
+    _ProductItemController(),
+  ];
+
   // Address
   final _addressController = TextEditingController();
   final _cityController = TextEditingController();
@@ -53,6 +72,9 @@ class _AddCustomerViewState extends State<AddCustomerView> {
     _phoneController.dispose();
     _altPhoneController.dispose();
     _siteNameController.dispose();
+    for (final p in _productControllers) {
+      p.dispose();
+    }
     _addressController.dispose();
     _cityController.dispose();
     _pinCodeController.dispose();
@@ -68,6 +90,18 @@ class _AddCustomerViewState extends State<AddCustomerView> {
 
     final firstScheduledServiceDate = DateFormatter.addMonths(_installationDate, 6);
 
+    final products = _productControllers
+        .where((p) => p.nameController.text.trim().isNotEmpty)
+        .map((p) => CustomerProduct(
+              name: p.nameController.text.trim(),
+              details: p.detailsController.text.trim(),
+            ))
+        .toList();
+
+    final plantType = products.isNotEmpty
+        ? products.map((p) => p.name).join(', ')
+        : _plantType;
+
     final customer = CustomerModel(
       id: '',
       name: _nameController.text.trim(),
@@ -77,7 +111,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
       alternatePhoneNumber: _altPhoneController.text.trim().isNotEmpty ? _altPhoneController.text.trim() : null,
       siteName: _siteNameController.text.trim().isNotEmpty ? _siteNameController.text.trim() : _nameController.text.trim(),
       installationDate: _installationDate,
-      plantType: _plantType,
+      plantType: plantType,
       firstContactDate: _firstContactDate,
       fullAddress: _addressController.text.trim(),
       city: _cityController.text.trim(),
@@ -88,6 +122,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
       isActive: true,
+      products: products,
     );
 
     final customerId = await provider.addCustomer(customer);
@@ -211,7 +246,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                             child: CustomTextField(
                               controller: _phoneController,
                               label: 'Primary Contact Number',
-                              hint: '10-digit mobile number',
+                              hint: 'e.g., +971 50 123 4567 or 9876543210',
                               isRequired: true,
                               keyboardType: TextInputType.phone,
                               prefixIcon: const Icon(Icons.phone_outlined, size: 18),
@@ -223,9 +258,10 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                             child: CustomTextField(
                               controller: _altPhoneController,
                               label: 'Secondary Contact Number (Optional)',
-                              hint: 'Alternate mobile or office landline',
+                              hint: 'Alternate mobile or UAE/landline',
                               keyboardType: TextInputType.phone,
                               prefixIcon: const Icon(Icons.phone_outlined, size: 18),
+                              validator: (val) => Validators.phone(val, false),
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -285,7 +321,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                                 final picked = await showDatePicker(
                                   context: context,
                                   initialDate: _installationDate,
-                                  firstDate: DateTime(2015),
+                                  firstDate: DateTime(1980),
                                   lastDate: now.add(const Duration(days: 365)),
                                 );
                                 if (picked != null) {
@@ -312,7 +348,7 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                                 final picked = await showDatePicker(
                                   context: context,
                                   initialDate: _firstContactDate ?? now,
-                                  firstDate: DateTime(2015),
+                                  firstDate: DateTime(1980),
                                   lastDate: now,
                                 );
                                 if (picked != null) {
@@ -340,9 +376,114 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Section 3: Address Information
+                  // Section 3: Installed Products & Equipment Details
                   _buildSectionCard(
-                    title: '3. Address Information',
+                    title: '3. Installed Products & Equipment Details',
+                    icon: Icons.inventory_2_outlined,
+                    children: [
+                      const Text(
+                        'Add all equipment and plant products installed for this customer (e.g. 1054 Carbon filter, RO plant, Softener). You can add multiple products below.',
+                        style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      ),
+                      const SizedBox(height: 14),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _productControllers.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final item = _productControllers[index];
+                          return Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.secondaryLight,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        'Product #${index + 1}',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.secondary,
+                                        ),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    if (_productControllers.length > 1)
+                                      IconButton(
+                                        tooltip: 'Remove Product',
+                                        icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.danger),
+                                        onPressed: () {
+                                          setState(() {
+                                            final removed = _productControllers.removeAt(index);
+                                            removed.dispose();
+                                          });
+                                        },
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: CustomTextField(
+                                        controller: item.nameController,
+                                        label: 'Product / Equipment Name',
+                                        hint: 'e.g., 1054 Carbon filter',
+                                        prefixIcon: const Icon(Icons.water_rounded, size: 18),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 14),
+                                    Expanded(
+                                      flex: 3,
+                                      child: CustomTextField(
+                                        controller: item.detailsController,
+                                        label: 'Product Details / Description',
+                                        hint: 'e.g., FRP 1054 vessel with activated carbon media',
+                                        prefixIcon: const Icon(Icons.description_outlined, size: 18),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _productControllers.add(_ProductItemController());
+                            });
+                          },
+                          icon: const Icon(Icons.add_rounded, size: 18),
+                          label: const Text('Add Another Product'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Section 4: Address Information
+                  _buildSectionCard(
+                    title: '4. Address Information',
                     icon: Icons.location_on_outlined,
                     children: [
                       CustomTextField(
@@ -390,9 +531,9 @@ class _AddCustomerViewState extends State<AddCustomerView> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Section 4: Notes
+                  // Section 5: Notes
                   _buildSectionCard(
-                    title: '4. Additional Remarks & Water Specifications',
+                    title: '5. Additional Remarks & Water Specifications',
                     icon: Icons.notes_rounded,
                     children: [
                       CustomTextField(

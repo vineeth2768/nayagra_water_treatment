@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nayagra_water_treatment/core/utils/date_formatter.dart';
+import 'package:nayagra_water_treatment/core/utils/validators.dart';
 import 'package:nayagra_water_treatment/core/constants/app_constants.dart';
 
 void main() {
@@ -33,6 +34,22 @@ void main() {
 
       expect(DateFormatter.isOverdue(pastDate), isTrue);
       expect(DateFormatter.isOverdue(futureDate), isFalse);
+    });
+
+    test('Validates Indian, UAE, and International phone numbers up to 15 digits', () {
+      // Valid Indian phone
+      expect(Validators.phone('9876543210'), isNull);
+      expect(Validators.phone('+91 9876543210'), isNull);
+
+      // Valid UAE numbers
+      expect(Validators.phone('+971 50 123 4567'), isNull);
+      expect(Validators.phone('0501234567'), isNull);
+      expect(Validators.phone('+97141234567'), isNull);
+      expect(Validators.phone('00971501234567'), isNull); // 14 digits
+
+      // Invalid (too short or too long)
+      expect(Validators.phone('12345'), isNotNull);
+      expect(Validators.phone('1234567890123456'), isNotNull); // 16 digits
     });
   });
 }

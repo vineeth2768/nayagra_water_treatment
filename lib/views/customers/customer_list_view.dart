@@ -26,6 +26,25 @@ class CustomerListView extends StatelessWidget {
       title: AppStrings.customers,
       subtitle: 'Manage water treatment plant clients, contracts, and installation records ($totalCustomers total)',
       headerActions: [
+        ElevatedButton.icon(
+          onPressed: () async {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Generating PDF Report... Download will start shortly.'),
+                duration: Duration(seconds: 2),
+                backgroundColor: AppColors.primary,
+              ),
+            );
+            await customerProvider.exportCustomersToPdf();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFC53030), // Classic PDF Red badge style
+            foregroundColor: Colors.white,
+          ),
+          icon: const Icon(Icons.picture_as_pdf_rounded, size: 16),
+          label: const Text('Download PDF'),
+        ),
+        const SizedBox(width: 8),
         OutlinedButton.icon(
           onPressed: () => customerProvider.exportCustomersToCsv(),
           icon: const Icon(Icons.file_download_outlined, size: 16),

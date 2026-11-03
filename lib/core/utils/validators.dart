@@ -32,8 +32,8 @@ class Validators {
       return isRequired ? 'Phone number is required' : null;
     }
     final cleanPhone = value.replaceAll(RegExp(r'[\s\-\(\)\+]'), '');
-    if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-      return 'Please enter a valid 10-digit phone number';
+    if (cleanPhone.length < 7 || cleanPhone.length > 15) {
+      return 'Please enter a valid phone number (up to 15 digits)';
     }
     return null;
   }
