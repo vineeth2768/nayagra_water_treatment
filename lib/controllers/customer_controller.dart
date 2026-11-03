@@ -37,6 +37,7 @@ class CustomerController {
   }
 
   Future<void> deleteCustomer(String id) async {
+    await _serviceRepository.deleteServicesForCustomer(id);
     await _customerRepository.deleteCustomer(id);
   }
 }

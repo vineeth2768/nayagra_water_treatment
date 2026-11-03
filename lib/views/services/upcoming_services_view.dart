@@ -13,6 +13,7 @@ import '../../widgets/complete_service_dialog.dart';
 import '../../widgets/reschedule_service_dialog.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/empty_state_widget.dart';
+import '../../widgets/confirmation_dialog.dart';
 
 class UpcomingServicesView extends StatelessWidget {
   const UpcomingServicesView({super.key});
@@ -318,6 +319,31 @@ class UpcomingServicesView extends StatelessWidget {
                               await provider.rescheduleService(serviceId: s.id, newDate: newDate);
                               if (context.mounted) {
                                 context.read<DashboardProvider>().loadStats(silent: true);
+                              }
+                            }
+                          },
+                        ),
+                        IconButton(
+                          tooltip: 'Delete Service',
+                          icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.danger),
+                          onPressed: () async {
+                            final confirm = await ConfirmationDialog.show(
+                              context,
+                              title: 'Delete Service',
+                              message: 'Are you sure you want to delete this scheduled service for "${s.customerName}"?',
+                              confirmText: 'Delete',
+                              isDestructive: true,
+                            );
+                            if (confirm == true && context.mounted) {
+                              final success = await provider.deleteService(s.id);
+                              if (success && context.mounted) {
+                                context.read<DashboardProvider>().loadStats(silent: true);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Service scheduled entry deleted.'),
+                                    backgroundColor: AppColors.primary,
+                                  ),
+                                );
                               }
                             }
                           },

@@ -22,8 +22,22 @@ class ServiceRepository {
       return _collection
           .orderBy('serviceDate', descending: false)
           .snapshots()
-          .map((snapshot) {
-        final list = snapshot.docs.map((doc) => ServiceModel.fromFirestore(doc)).toList();
+          .asyncMap((snapshot) async {
+        final customers = await _customerRepository.getCustomers();
+        final customerIds = customers.map((c) => c.id).toSet();
+
+        final list = <ServiceModel>[];
+        for (final doc in snapshot.docs) {
+          final service = ServiceModel.fromFirestore(doc);
+          // Auto-cleanup orphaned services whose customer record was deleted
+          if (customers.isNotEmpty && !customerIds.contains(service.customerId)) {
+            _collection.doc(doc.id).delete().catchError((e) {
+              debugPrint('Error deleting orphan service: $e');
+            });
+            continue;
+          }
+          list.add(service);
+        }
         _localServices.clear();
         _localServices.addAll(list);
         return list;
@@ -39,8 +53,22 @@ class ServiceRepository {
 
   Future<List<ServiceModel>> getServices() async {
     try {
+      final customers = await _customerRepository.getCustomers();
+      final customerIds = customers.map((c) => c.id).toSet();
+
       final snapshot = await _collection.orderBy('serviceDate', descending: false).get();
-      final list = snapshot.docs.map((doc) => ServiceModel.fromFirestore(doc)).toList();
+      final list = <ServiceModel>[];
+      for (final doc in snapshot.docs) {
+        final service = ServiceModel.fromFirestore(doc);
+        // Auto-cleanup orphaned services whose customer record was deleted
+        if (customers.isNotEmpty && !customerIds.contains(service.customerId)) {
+          _collection.doc(doc.id).delete().catchError((e) {
+            debugPrint('Error deleting orphan service: $e');
+          });
+          continue;
+        }
+        list.add(service);
+      }
       _localServices.clear();
       _localServices.addAll(list);
       return list;
@@ -48,6 +76,18 @@ class ServiceRepository {
       debugPrint('Firestore getServices error: $e');
       return _localServices;
     }
+  }
+
+  Future<void> deleteServicesForCustomer(String customerId) async {
+    try {
+      final snapshot = await _collection.where('customerId', isEqualTo: customerId).get();
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      debugPrint('Firestore deleteServicesForCustomer error: $e');
+    }
+    _localServices.removeWhere((s) => s.customerId == customerId);
   }
 
   Future<List<ServiceModel>> getServicesForCustomer(String customerId) async {
