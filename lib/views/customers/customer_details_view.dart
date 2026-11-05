@@ -281,7 +281,14 @@ class _CustomerDetailsViewState extends State<CustomerDetailsView> with SingleTi
                           {'label': 'Site Name', 'value': customer.siteName},
                           {'label': 'Commissioning Date', 'value': DateFormatter.formatDate(customer.installationDate)},
                           {'label': 'First Contact Date', 'value': DateFormatter.formatDate(customer.firstContactDate)},
-                          {'label': 'Default Service Cycle', 'value': 'Every 6 Months'},
+                          {
+                            'label': 'Service Cycle / Period',
+                            'value': customer.serviceIntervalMonths == 3
+                                ? 'Every 3 Months (Quarterly)'
+                                : customer.serviceIntervalMonths == 12
+                                    ? 'Every 12 Months (Annual)'
+                                    : 'Every 6 Months (Standard Water Plant Cycle)',
+                          },
                           {'label': 'Total Cycles Completed', 'value': '${customer.totalServicesCompleted} Completed'},
                         ],
                       ),
@@ -498,7 +505,7 @@ class _CustomerDetailsViewState extends State<CustomerDetailsView> with SingleTi
               city: customer.city,
               plantType: customer.plantType,
               serviceNumber: 1,
-              serviceDate: DateFormatter.addMonths(customer.installationDate, 6),
+              serviceDate: DateFormatter.addMonths(customer.installationDate, customer.serviceIntervalMonths),
               status: AppConstants.statusUpcoming,
               createdAt: DateTime.now(),
               updatedAt: DateTime.now(),

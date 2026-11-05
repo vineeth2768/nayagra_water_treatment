@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/constants/app_constants.dart';
 
 class CustomerProduct {
   final String name;
@@ -47,6 +48,7 @@ class CustomerModel {
   final DateTime? lastServiceDate;
   final int totalServicesCompleted;
   final List<CustomerProduct> products;
+  final int serviceIntervalMonths;
 
   CustomerModel({
     required this.id,
@@ -71,6 +73,7 @@ class CustomerModel {
     this.lastServiceDate,
     this.totalServicesCompleted = 0,
     this.products = const [],
+    this.serviceIntervalMonths = AppConstants.defaultServiceIntervalMonths,
   });
 
   Map<String, dynamic> toMap() {
@@ -96,6 +99,7 @@ class CustomerModel {
       'lastServiceDate': lastServiceDate != null ? Timestamp.fromDate(lastServiceDate!) : null,
       'totalServicesCompleted': totalServicesCompleted,
       'products': products.map((p) => p.toMap()).toList(),
+      'serviceIntervalMonths': serviceIntervalMonths,
     };
   }
 
@@ -146,6 +150,7 @@ class CustomerModel {
       lastServiceDate: parseDateTime(map['lastServiceDate']),
       totalServicesCompleted: (map['totalServicesCompleted'] as num?)?.toInt() ?? 0,
       products: parsedProducts,
+      serviceIntervalMonths: (map['serviceIntervalMonths'] as num?)?.toInt() ?? AppConstants.defaultServiceIntervalMonths,
     );
   }
 
@@ -172,6 +177,7 @@ class CustomerModel {
     DateTime? lastServiceDate,
     int? totalServicesCompleted,
     List<CustomerProduct>? products,
+    int? serviceIntervalMonths,
   }) {
     return CustomerModel(
       id: id ?? this.id,
@@ -196,6 +202,7 @@ class CustomerModel {
       lastServiceDate: lastServiceDate ?? this.lastServiceDate,
       totalServicesCompleted: totalServicesCompleted ?? this.totalServicesCompleted,
       products: products ?? this.products,
+      serviceIntervalMonths: serviceIntervalMonths ?? this.serviceIntervalMonths,
     );
   }
 }

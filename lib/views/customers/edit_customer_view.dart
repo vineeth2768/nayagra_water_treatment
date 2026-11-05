@@ -52,6 +52,7 @@ class _EditCustomerViewState extends State<EditCustomerView> {
 
   late TextEditingController _siteNameController;
   late DateTime _installationDate;
+  late int _serviceIntervalMonths;
   late String _plantType;
   DateTime? _firstContactDate;
 
@@ -76,6 +77,7 @@ class _EditCustomerViewState extends State<EditCustomerView> {
     _pinCodeController = TextEditingController();
     _notesController = TextEditingController();
     _installationDate = DateTime.now();
+    _serviceIntervalMonths = AppConstants.defaultServiceIntervalMonths;
     _plantType = AppConstants.plantTypes[0];
     _state = 'Gujarat';
   }
@@ -95,6 +97,7 @@ class _EditCustomerViewState extends State<EditCustomerView> {
 
         _siteNameController.text = customer.siteName;
         _installationDate = customer.installationDate;
+        _serviceIntervalMonths = customer.serviceIntervalMonths;
         _plantType = customer.plantType;
         _firstContactDate = customer.firstContactDate;
 
@@ -171,6 +174,7 @@ class _EditCustomerViewState extends State<EditCustomerView> {
       customerNotes: _notesController.text.trim(),
       updatedAt: DateTime.now(),
       products: products,
+      serviceIntervalMonths: _serviceIntervalMonths,
     );
 
     final success = await provider.updateCustomer(updated);
@@ -359,35 +363,62 @@ class _EditCustomerViewState extends State<EditCustomerView> {
                           ),
                           const SizedBox(width: 16),
                           Expanded(
-                            child: InkWell(
-                              onTap: () async {
-                                final now = DateTime.now();
-                                final picked = await showDatePicker(
-                                  context: context,
-                                  initialDate: _firstContactDate ?? now,
-                                  firstDate: DateTime(1980),
-                                  lastDate: now,
-                                );
-                                if (picked != null) {
-                                  setState(() => _firstContactDate = picked);
+                            child: DropdownButtonFormField<int>(
+                              initialValue: _serviceIntervalMonths,
+                              decoration: const InputDecoration(
+                                labelText: 'Service Period / Frequency *',
+                                prefixIcon: Icon(Icons.av_timer_rounded, size: 18),
+                              ),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 3,
+                                  child: Text('Every 3 Months (Quarterly)'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 6,
+                                  child: Text('Every 6 Months (Standard Water Plant Cycle)'),
+                                ),
+                                DropdownMenuItem(
+                                  value: 12,
+                                  child: Text('Every 12 Months (Annual)'),
+                                ),
+                              ],
+                              onChanged: (val) {
+                                if (val != null) {
+                                  setState(() => _serviceIntervalMonths = val);
                                 }
                               },
-                              child: InputDecorator(
-                                decoration: const InputDecoration(
-                                  labelText: 'First Contact Date',
-                                  suffixIcon: Icon(Icons.history_toggle_off_rounded, size: 18),
-                                ),
-                                child: Text(
-                                  _firstContactDate != null ? DateFormatter.formatDate(_firstContactDate) : 'Not specified',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: _firstContactDate != null ? AppColors.textPrimary : AppColors.textMuted,
-                                  ),
-                                ),
-                              ),
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      InkWell(
+                        onTap: () async {
+                          final now = DateTime.now();
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _firstContactDate ?? now,
+                            firstDate: DateTime(1980),
+                            lastDate: now,
+                          );
+                          if (picked != null) {
+                            setState(() => _firstContactDate = picked);
+                          }
+                        },
+                        child: InputDecorator(
+                          decoration: const InputDecoration(
+                            labelText: 'First Contact Date',
+                            suffixIcon: Icon(Icons.history_toggle_off_rounded, size: 18),
+                          ),
+                          child: Text(
+                            _firstContactDate != null ? DateFormatter.formatDate(_firstContactDate) : 'Not specified',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: _firstContactDate != null ? AppColors.textPrimary : AppColors.textMuted,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),

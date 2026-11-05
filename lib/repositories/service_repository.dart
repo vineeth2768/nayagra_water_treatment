@@ -97,7 +97,8 @@ class ServiceRepository {
   }
 
   Future<String> scheduleFirstService(CustomerModel customer) async {
-    final firstServiceDate = DateFormatter.addMonths(customer.installationDate, AppConstants.defaultServiceIntervalMonths);
+    final intervalMonths = customer.serviceIntervalMonths > 0 ? customer.serviceIntervalMonths : AppConstants.defaultServiceIntervalMonths;
+    final firstServiceDate = DateFormatter.addMonths(customer.installationDate, intervalMonths);
 
     final firstService = ServiceModel(
       id: '',
@@ -142,7 +143,11 @@ class ServiceRepository {
     if (index == -1) return;
 
     final currentService = all[index];
-    final nextServiceDate = DateFormatter.addMonths(completedDate, AppConstants.defaultServiceIntervalMonths);
+    final customer = await _customerRepository.getCustomerById(currentService.customerId);
+    final intervalMonths = (customer != null && customer.serviceIntervalMonths > 0)
+        ? customer.serviceIntervalMonths
+        : AppConstants.defaultServiceIntervalMonths;
+    final nextServiceDate = DateFormatter.addMonths(completedDate, intervalMonths);
 
     final updatedCurrentService = currentService.copyWith(
       status: AppConstants.statusCompleted,
