@@ -146,6 +146,14 @@ class AppSidebar extends StatelessWidget {
                   activeIcon: Icons.history_rounded,
                   route: RouteNames.serviceHistory,
                 ),
+                const SizedBox(height: 4),
+                _buildNavItem(
+                  context,
+                  title: 'Technicians',
+                  icon: Icons.engineering_outlined,
+                  activeIcon: Icons.engineering_rounded,
+                  route: RouteNames.technicians,
+                ),
                 const SizedBox(height: 16),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),

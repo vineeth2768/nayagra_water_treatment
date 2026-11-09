@@ -47,18 +47,32 @@ class DateFormatter {
     return target.difference(today).inDays;
   }
 
-  /// Formats human-friendly remaining days string
+  /// Formats human-friendly remaining duration (years, months, days)
   static String formatRemainingDays(DateTime targetDate) {
     final days = daysRemaining(targetDate);
     if (days < 0) {
-      return '${days.abs()} days overdue';
+      final absDays = days.abs();
+      return _formatPeriodString(absDays);
     } else if (days == 0) {
       return 'Due Today';
     } else if (days == 1) {
       return 'Due tomorrow';
     } else {
-      return '$days days left';
+      return '${_formatPeriodString(days)} left';
     }
+  }
+
+  static String _formatPeriodString(int totalDays) {
+    if (totalDays >= 365) {
+      final years = totalDays ~/ 365;
+      final remainingDays = totalDays % 365;
+      final months = remainingDays ~/ 30;
+      if (months > 0) {
+        return '$years yr${years > 1 ? 's' : ''} $months mo${months > 1 ? 's' : ''}';
+      }
+      return '$years year${years > 1 ? 's' : ''}';
+    }
+    return '$totalDays day${totalDays != 1 ? 's' : ''}';
   }
 
   /// Check if date is overdue relative to start of today

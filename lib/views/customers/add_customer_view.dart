@@ -85,10 +85,19 @@ class _AddCustomerViewState extends State<AddCustomerView> {
   }
 
   Future<void> _saveCustomer() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please check required fields (Customer Name and Phone Number are required).'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
 
     setState(() => _isSaving = true);
     final provider = context.read<CustomerProvider>();
+    final dashboardProvider = context.read<DashboardProvider>();
 
     final firstScheduledServiceDate = DateFormatter.addMonths(_installationDate, _serviceIntervalMonths);
 
@@ -129,20 +138,23 @@ class _AddCustomerViewState extends State<AddCustomerView> {
     );
 
     final customerId = await provider.addCustomer(customer);
+    if (!mounted) return;
     setState(() => _isSaving = false);
 
-    if (customerId != null && mounted) {
+    if (customerId != null) {
       // Trigger silent dashboard stats refresh in the background
-      context.read<DashboardProvider>().loadStats(silent: true);
+      dashboardProvider.loadStats(silent: true);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(AppStrings.customerCreated),
           backgroundColor: AppColors.success,
+          duration: Duration(seconds: 2),
         ),
       );
+      // Immediately navigate to customer directory
       context.go(RouteNames.customers);
-    } else if (mounted) {
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(provider.errorMessage ?? 'Failed to save customer. Please try again.'),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../core/constants/app_colors.dart';
 import '../core/utils/date_formatter.dart';
 import '../models/service_model.dart';
+import '../providers/technician_provider.dart';
 import 'custom_text_field.dart';
 
 class CompleteServiceDialog extends StatefulWidget {
@@ -26,6 +28,8 @@ class _CompleteServiceDialogState extends State<CompleteServiceDialog> {
   final _technicianController = TextEditingController();
   final _notesController = TextEditingController();
   final _changesController = TextEditingController();
+  bool _initializedTech = false;
+  String? _selectedTechId;
 
   final List<String> _quickNotes = [
     'Filter replacement completed.',
@@ -40,6 +44,19 @@ class _CompleteServiceDialogState extends State<CompleteServiceDialog> {
   void initState() {
     super.initState();
     _completedDate = DateTime.now();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedTech) {
+      final techs = context.read<TechnicianProvider>().activeTechnicians;
+      if (techs.isNotEmpty) {
+        _selectedTechId = techs.first.id;
+        _technicianController.text = techs.first.name;
+      }
+      _initializedTech = true;
+    }
   }
 
   @override
@@ -63,6 +80,7 @@ class _CompleteServiceDialogState extends State<CompleteServiceDialog> {
   @override
   Widget build(BuildContext context) {
     final nextCalculated = DateFormatter.addMonths(_completedDate, 6);
+    final activeTechs = context.watch<TechnicianProvider>().activeTechnicians;
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -174,20 +192,67 @@ class _CompleteServiceDialogState extends State<CompleteServiceDialog> {
 
                   const SizedBox(height: 16),
 
-                  // Technician Name
-                  CustomTextField(
-                    controller: _technicianController,
-                    label: 'Technician Name',
-                    hint: 'e.g., Rajesh Verma / Service Team Alpha',
-                    isRequired: true,
-                    prefixIcon: const Icon(Icons.person_outline_rounded, size: 18),
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return 'Please enter technician name';
-                      }
-                      return null;
-                    },
-                  ),
+                  // Technician Selection
+                  if (activeTechs.isNotEmpty) ...[
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedTechId,
+                      decoration: const InputDecoration(
+                        labelText: 'Assigned Technician *',
+                        prefixIcon: Icon(Icons.engineering_outlined, size: 18),
+                      ),
+                      items: [
+                        ...activeTechs.map((t) => DropdownMenuItem(
+                              value: t.id,
+                              child: Text('${t.name} (${t.role})', overflow: TextOverflow.ellipsis),
+                            )),
+                        const DropdownMenuItem(
+                          value: '__custom__',
+                          child: Text('+ Other / Type Custom Name...'),
+                        ),
+                      ],
+                      onChanged: (val) {
+                        setState(() {
+                          _selectedTechId = val;
+                          if (val != null && val != '__custom__') {
+                            final tech = activeTechs.firstWhere((t) => t.id == val);
+                            _technicianController.text = tech.name;
+                          } else if (val == '__custom__') {
+                            _technicianController.clear();
+                          }
+                        });
+                      },
+                    ),
+                    if (_selectedTechId == '__custom__') ...[
+                      const SizedBox(height: 12),
+                      CustomTextField(
+                        controller: _technicianController,
+                        label: 'Custom Technician Name *',
+                        hint: 'e.g., Rajesh Verma / Service Team Alpha',
+                        isRequired: true,
+                        prefixIcon: const Icon(Icons.person_outline_rounded, size: 18),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Please enter technician name';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ] else ...[
+                    CustomTextField(
+                      controller: _technicianController,
+                      label: 'Technician Name *',
+                      hint: 'e.g., Rajesh Verma / Service Team Alpha',
+                      isRequired: true,
+                      prefixIcon: const Icon(Icons.person_outline_rounded, size: 18),
+                      validator: (val) {
+                        if (val == null || val.trim().isEmpty) {
+                          return 'Please enter technician name';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
 
                   const SizedBox(height: 16),
 

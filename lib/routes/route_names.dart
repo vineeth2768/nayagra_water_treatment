@@ -8,5 +8,6 @@ class RouteNames {
   static const String upcomingServices = '/services/upcoming';
   static const String completedServices = '/services/completed';
   static const String serviceHistory = '/services/history';
+  static const String technicians = '/technicians';
   static const String settings = '/settings';
 }

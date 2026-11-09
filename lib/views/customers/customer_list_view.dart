@@ -14,8 +14,23 @@ import '../../widgets/loading_widget.dart';
 import '../../widgets/empty_state_widget.dart';
 import '../../widgets/confirmation_dialog.dart';
 
-class CustomerListView extends StatelessWidget {
+class CustomerListView extends StatefulWidget {
   const CustomerListView({super.key});
+
+  @override
+  State<CustomerListView> createState() => _CustomerListViewState();
+}
+
+class _CustomerListViewState extends State<CustomerListView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<CustomerProvider>().refreshCustomers();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -168,6 +183,7 @@ class CustomerListView extends StatelessWidget {
                     contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   ),
                   items: const [
+                    DropdownMenuItem(value: 'createdAt_desc', child: Text('Recently Added', style: TextStyle(fontSize: 12))),
                     DropdownMenuItem(value: 'installationDate_desc', child: Text('Newest Installed', style: TextStyle(fontSize: 12))),
                     DropdownMenuItem(value: 'installationDate_asc', child: Text('Oldest Installed', style: TextStyle(fontSize: 12))),
                     DropdownMenuItem(value: 'name_asc', child: Text('Name (A-Z)', style: TextStyle(fontSize: 12))),

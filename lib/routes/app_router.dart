@@ -10,6 +10,7 @@ import '../views/customers/customer_details_view.dart';
 import '../views/services/upcoming_services_view.dart';
 import '../views/services/completed_services_view.dart';
 import '../views/services/service_history_view.dart';
+import '../views/technicians/technicians_view.dart';
 import '../views/settings/settings_view.dart';
 import 'route_names.dart';
 
@@ -102,6 +103,13 @@ class AppRouter {
           pageBuilder: (context, state) => NoTransitionPage<void>(
             key: state.pageKey,
             child: const ServiceHistoryView(),
+          ),
+        ),
+        GoRoute(
+          path: RouteNames.technicians,
+          pageBuilder: (context, state) => NoTransitionPage<void>(
+            key: state.pageKey,
+            child: const TechniciansView(),
           ),
         ),
         GoRoute(

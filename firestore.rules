@@ -17,6 +17,11 @@ service cloud.firestore {
       allow read, write: if isAuthenticated();
     }
     
+    // Technicians collection
+    match /technicians/{technicianId} {
+      allow read, write: if isAuthenticated();
+    }
+    
     // Users collection
     match /users/{userId} {
       allow read: if isAuthenticated();

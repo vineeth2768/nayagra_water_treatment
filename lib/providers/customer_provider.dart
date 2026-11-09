@@ -19,7 +19,7 @@ class CustomerProvider extends ChangeNotifier {
   String _searchQuery = '';
   String? _selectedPlantType;
   String? _selectedServiceStatus; // 'All', 'Upcoming', 'Overdue', 'Completed'
-  String _sortBy = 'installationDate_desc';
+  String _sortBy = 'createdAt_desc'; // Default: Most recently added customers at the top
 
   // Pagination state
   int _currentPage = 1;
@@ -98,9 +98,21 @@ class CustomerProvider extends ChangeNotifier {
     _searchQuery = '';
     _selectedPlantType = null;
     _selectedServiceStatus = null;
-    _sortBy = 'installationDate_desc';
+    _sortBy = 'createdAt_desc';
     _currentPage = 1;
     notifyListeners();
+  }
+
+  Future<void> refreshCustomers() async {
+    try {
+      final list = await _controller.getAllCustomers();
+      if (list.isNotEmpty) {
+        _allCustomers = list;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('CustomerProvider refreshCustomers error: $e');
+    }
   }
 
   List<CustomerModel> get filteredCustomers {
@@ -136,6 +148,9 @@ class CustomerProvider extends ChangeNotifier {
     }
 
     switch (_sortBy) {
+      case 'createdAt_desc':
+        result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
       case 'name_asc':
         result.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
         break;
@@ -143,8 +158,10 @@ class CustomerProvider extends ChangeNotifier {
         result.sort((a, b) => a.installationDate.compareTo(b.installationDate));
         break;
       case 'installationDate_desc':
-      default:
         result.sort((a, b) => b.installationDate.compareTo(a.installationDate));
+        break;
+      default:
+        result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         break;
     }
 
@@ -175,11 +192,17 @@ class CustomerProvider extends ChangeNotifier {
       final id = await _controller.createCustomer(customer);
       final newCustomer = customer.copyWith(
         id: id,
-        nextServiceDate: DateFormatter.addMonths(customer.installationDate, 6),
+        nextServiceDate: DateFormatter.addMonths(customer.installationDate, customer.serviceIntervalMonths),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
-      if (!_allCustomers.any((c) => c.id == id)) {
-        _allCustomers.insert(0, newCustomer);
-      }
+      _allCustomers.removeWhere((c) => c.id == id);
+      _allCustomers.insert(0, newCustomer);
+      _currentPage = 1;
+      _searchQuery = '';
+      _selectedPlantType = null;
+      _selectedServiceStatus = null;
+      _sortBy = 'createdAt_desc';
       _isLoading = false;
       notifyListeners();
       return id;

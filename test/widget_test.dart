@@ -36,6 +36,20 @@ void main() {
       expect(DateFormatter.isOverdue(futureDate), isFalse);
     });
 
+    test('Formats remaining and overdue durations cleanly in days or years', () {
+      final now = DateTime.now();
+      // 10 years in the past (overdue)
+      final tenYearsAgo = DateTime(now.year - 10, now.month, now.day);
+      expect(DateFormatter.formatRemainingDays(tenYearsAgo), equals('10 years'));
+
+      // 100 days in the future
+      final hundredDaysFuture = now.add(const Duration(days: 100));
+      expect(DateFormatter.formatRemainingDays(hundredDaysFuture), contains('days left'));
+
+      // Due today
+      expect(DateFormatter.formatRemainingDays(now), equals('Due Today'));
+    });
+
     test('Validates Indian, UAE, and International phone numbers up to 15 digits', () {
       // Valid Indian phone
       expect(Validators.phone('9876543210'), isNull);

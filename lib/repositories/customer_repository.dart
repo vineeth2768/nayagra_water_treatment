@@ -13,10 +13,10 @@ class CustomerRepository {
   Stream<List<CustomerModel>> getCustomersStream() {
     try {
       return _collection
-          .orderBy('createdAt', descending: true)
           .snapshots()
           .map((snapshot) {
         final list = snapshot.docs.map((doc) => CustomerModel.fromFirestore(doc)).toList();
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         _localCustomers.clear();
         _localCustomers.addAll(list);
         return list;
@@ -32,8 +32,9 @@ class CustomerRepository {
 
   Future<List<CustomerModel>> getCustomers() async {
     try {
-      final snapshot = await _collection.orderBy('createdAt', descending: true).get();
+      final snapshot = await _collection.get();
       final list = snapshot.docs.map((doc) => CustomerModel.fromFirestore(doc)).toList();
+      list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       _localCustomers.clear();
       _localCustomers.addAll(list);
       return list;
@@ -57,7 +58,7 @@ class CustomerRepository {
   }
 
   Future<String> addCustomer(CustomerModel customer) async {
-    final nextDate = DateFormatter.addMonths(customer.installationDate, 6);
+    final nextDate = DateFormatter.addMonths(customer.installationDate, customer.serviceIntervalMonths);
     final enrichedCustomer = customer.copyWith(
       nextServiceDate: nextDate,
       createdAt: DateTime.now(),
@@ -67,6 +68,7 @@ class CustomerRepository {
     try {
       final docRef = await _collection.add(enrichedCustomer.toMap());
       final savedCustomer = enrichedCustomer.copyWith(id: docRef.id);
+      _localCustomers.removeWhere((c) => c.id == docRef.id);
       _localCustomers.insert(0, savedCustomer);
       debugPrint('Customer added to Firestore: ${docRef.id}');
       return docRef.id;
@@ -74,6 +76,7 @@ class CustomerRepository {
       debugPrint('Firestore addCustomer fallback: $e');
       final localId = 'cust_${DateTime.now().millisecondsSinceEpoch}';
       final savedCustomer = enrichedCustomer.copyWith(id: localId);
+      _localCustomers.removeWhere((c) => c.id == localId);
       _localCustomers.insert(0, savedCustomer);
       return localId;
     }

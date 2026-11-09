@@ -5,6 +5,7 @@ import 'app.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/customer_repository.dart';
 import 'repositories/service_repository.dart';
+import 'repositories/technician_repository.dart';
 import 'repositories/dashboard_repository.dart';
 
 void main() async {
@@ -23,6 +24,7 @@ void main() async {
   final authRepository = AuthRepository();
   final customerRepository = CustomerRepository();
   final serviceRepository = ServiceRepository(customerRepository: customerRepository);
+  final technicianRepository = TechnicianRepository();
   final dashboardRepository = DashboardRepository(
     customerRepository: customerRepository,
     serviceRepository: serviceRepository,
@@ -33,6 +35,7 @@ void main() async {
       authRepository: authRepository,
       customerRepository: customerRepository,
       serviceRepository: serviceRepository,
+      technicianRepository: technicianRepository,
       dashboardRepository: dashboardRepository,
     ),
   );
